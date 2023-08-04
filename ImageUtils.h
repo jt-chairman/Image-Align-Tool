@@ -27,19 +27,23 @@ private:
 
 private slots:
 
-
-    void on_RectifyButton_clicked();
-
     void on_actionRead_Template_Image_triggered();
 
-    void on_RotateButton_clicked();
+    void on_ScaleModeButton_clicked();
+
+    void on_ImageGenerateButton_clicked();
+
+    void on_ResetParaButton_clicked();
+
+    void on_actionSave_Template_Image_triggered();
 
 signals:
 
 
 private:
-    QSharedPointer<QImage> TemplateImage;
-    QSharedPointer<QImage> SourceImage;
+    QSharedPointer<QImage> TemplateImageSrc = nullptr;
+    QSharedPointer<QImage> TemplateImage = nullptr;
+    QSharedPointer<QImage> SourceImageSrc = nullptr;
 
 private:
     Ui::ImageUtils *ui;

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>750</width>
     <height>600</height>
    </rect>
   </property>
@@ -15,9 +15,6 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
-     <widget class="TestGraphicsView" name="TemplateView"/>
-    </item>
     <item row="1" column="0">
      <layout class="QHBoxLayout" name="horizontalLayout_9">
       <item>
@@ -43,16 +40,13 @@
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="RectifyRateInput"/>
+           <widget class="QLineEdit" name="RectifyRateInput">
+            <property name="text">
+             <string>0</string>
+            </property>
+           </widget>
           </item>
          </layout>
-        </item>
-        <item>
-         <widget class="QPushButton" name="RectifyButton">
-          <property name="text">
-           <string>Go</string>
-          </property>
-         </widget>
         </item>
        </layout>
       </item>
@@ -79,16 +73,13 @@
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="RotateAngleInput"/>
+           <widget class="QLineEdit" name="RotateAngleInput">
+            <property name="text">
+             <string>0</string>
+            </property>
+           </widget>
           </item>
          </layout>
-        </item>
-        <item>
-         <widget class="QPushButton" name="RotateButton">
-          <property name="text">
-           <string>Go</string>
-          </property>
-         </widget>
         </item>
        </layout>
       </item>
@@ -114,6 +105,13 @@
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_3">
                 <item>
+                 <widget class="QPushButton" name="ScaleModeButton">
+                  <property name="text">
+                   <string>Increment Mode</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
                  <widget class="QLabel" name="label_3">
                   <property name="text">
                    <string>X-Axis</string>
@@ -121,7 +119,11 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLineEdit" name="XScaleInput"/>
+                 <widget class="QLineEdit" name="XScaleInput">
+                  <property name="text">
+                   <string>0</string>
+                  </property>
+                 </widget>
                 </item>
                </layout>
               </item>
@@ -133,24 +135,38 @@
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="YScaleInput_2"/>
+               <widget class="QLineEdit" name="YScaleInput">
+                <property name="text">
+                 <string>0</string>
+                </property>
+               </widget>
               </item>
              </layout>
             </item>
            </layout>
           </item>
-          <item>
-           <widget class="QPushButton" name="ScaleButton">
-            <property name="text">
-             <string>Go</string>
-            </property>
-           </widget>
-          </item>
          </layout>
+        </item>
+        <item>
+         <widget class="QPushButton" name="ImageGenerateButton">
+          <property name="text">
+           <string>Go</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="ResetParaButton">
+          <property name="text">
+           <string>Reset</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
      </layout>
+    </item>
+    <item row="0" column="0">
+     <widget class="TestGraphicsView" name="TemplateView"/>
     </item>
    </layout>
   </widget>
@@ -159,8 +175,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
-     <height>21</height>
+     <width>750</width>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuCaliLite">
@@ -169,6 +185,7 @@
     </property>
     <addaction name="actionRead_Template_Image"/>
     <addaction name="actionRead_Source_Image"/>
+    <addaction name="actionSave_Template_Image"/>
    </widget>
    <addaction name="menuCaliLite"/>
   </widget>
@@ -181,6 +198,11 @@
   <action name="actionRead_Source_Image">
    <property name="text">
     <string>Read Source Image</string>
+   </property>
+  </action>
+  <action name="actionSave_Template_Image">
+   <property name="text">
+    <string>Save Template Image</string>
    </property>
   </action>
  </widget>

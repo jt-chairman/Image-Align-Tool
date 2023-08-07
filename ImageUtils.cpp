@@ -214,3 +214,11 @@ void ImageUtils::on_actionSave_Template_Image_triggered()
     }
 }
 
+
+void ImageUtils::on_actionRead_Source_Image_triggered()
+{
+    QString textfile = QFileDialog::getOpenFileName(this);
+    SourceImageSrc = QSharedPointer<QImage>(new QImage(textfile));
+    ui->MatchWindowView->setPixmapItem(SourceImageSrc);
+}
+

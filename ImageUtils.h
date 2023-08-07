@@ -37,6 +37,8 @@ private slots:
 
     void on_actionSave_Template_Image_triggered();
 
+    void on_actionRead_Source_Image_triggered();
+
 signals:
 
 

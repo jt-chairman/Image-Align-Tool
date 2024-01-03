@@ -9,6 +9,7 @@
 #include <QScrollBar>
 #include <QImageReader>
 #include <QSharedPointer>
+#include <QGraphicsPixmapItem>
 
 using namespace cv;
 using namespace std;
@@ -18,7 +19,10 @@ ImageUtils::ImageUtils(QWidget *parent)
     , ui(new Ui::ImageUtils)
 {
     ui->setupUi(this);
-
+    connect(ui->TemplateView, &TestGraphicsView::mouseMoved, this, [&](const QPointF &pos){
+        ui->LabelXCoordinate->setText(QString("%1").arg(pos.x()));
+        ui->LabelYCoordinate->setText(QString("%1").arg(pos.y()));
+    });
     QImageReader::setAllocationLimit(2048);
 }
 
@@ -219,6 +223,34 @@ void ImageUtils::on_actionRead_Source_Image_triggered()
 {
     QString textfile = QFileDialog::getOpenFileName(this);
     SourceImageSrc = QSharedPointer<QImage>(new QImage(textfile));
-    ui->MatchWindowView->setPixmapItem(SourceImageSrc);
+    ui->TemplateView->stackRef(SourceImageSrc);
+}
+
+
+void ImageUtils::on_horizontalSlider_valueChanged(int value)
+{
+    if(ui->TemplateView->RefItem() != nullptr){
+        ui->TemplateView->RefItem()->setOpacity((double)value / 100.0);
+    }
+}
+
+void ImageUtils::on_ButtonLeft_clicked()
+{
+    ui->TemplateView->RefItem()->setPos(ui->TemplateView->RefItem()->pos().x() - 1, ui->TemplateView->RefItem()->pos().y());
+}
+
+void ImageUtils::on_ButtonRight_clicked()
+{
+    ui->TemplateView->RefItem()->setPos(ui->TemplateView->RefItem()->pos().x() + 1, ui->TemplateView->RefItem()->pos().y());
+}
+
+void ImageUtils::on_ButtonTop_clicked()
+{
+    ui->TemplateView->RefItem()->setPos(ui->TemplateView->RefItem()->pos().x(), ui->TemplateView->RefItem()->pos().y() - 1);
+}
+
+void ImageUtils::on_ButtonBottom_clicked()
+{
+    ui->TemplateView->RefItem()->setPos(ui->TemplateView->RefItem()->pos().x(), ui->TemplateView->RefItem()->pos().y() + 1);
 }
 

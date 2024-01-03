@@ -39,6 +39,16 @@ private slots:
 
     void on_actionRead_Source_Image_triggered();
 
+    void on_horizontalSlider_valueChanged(int value);
+
+    void on_ButtonRight_clicked();
+
+    void on_ButtonLeft_clicked();
+
+    void on_ButtonTop_clicked();
+
+    void on_ButtonBottom_clicked();
+
 signals:
 
 

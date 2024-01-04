@@ -9,6 +9,7 @@
 #include <QScrollBar>
 #include <QImageReader>
 #include <QSharedPointer>
+#include <QGraphicsPixmapItem>
 
 using namespace cv;
 using namespace std;
@@ -18,7 +19,10 @@ ImageUtils::ImageUtils(QWidget *parent)
     , ui(new Ui::ImageUtils)
 {
     ui->setupUi(this);
-
+    connect(ui->TemplateView, &TestGraphicsView::mouseMoved, this, [&](const QPointF &pos){
+        ui->LabelXCoordinate->setText(QString("%1").arg(pos.x()));
+        ui->LabelYCoordinate->setText(QString("%1").arg(pos.y()));
+    });
     QImageReader::setAllocationLimit(2048);
 }
 
@@ -106,59 +110,147 @@ QImage ImageUtils::cvMat2QImage(const cv::Mat &mat)
     {
     case CV_8UC1:
         // QImage构造：数据，宽度，高度，每行多少字节，存储结构
-        image = QImage((const unsigned char*)mat.data, mat.cols, mat.rows, mat.step, QImage::Format_Grayscale8);
+        image = QImage((const unsigned char*)mat.data, mat.cols, mat.rows, mat.step, QImage::Format_Grayscale8).copy();
         break;
     case CV_8UC3:
-        image = QImage((const unsigned char*)mat.data, mat.cols, mat.rows, mat.step, QImage::Format_RGB888);
+        image = QImage((const unsigned char*)mat.data, mat.cols, mat.rows, mat.step, QImage::Format_RGB888).copy();
         image = image.rgbSwapped(); // BRG转为RGB
         // Qt5.14增加了Format_BGR888
         // image = QImage((const unsigned char*)mat.data, mat.cols, mat.rows, mat.cols * 3, QImage::Format_BGR888);
         break;
     case CV_8UC4:
-        image = QImage((const unsigned char*)mat.data, mat.cols, mat.rows, mat.step, QImage::Format_ARGB32);
+        image = QImage((const unsigned char*)mat.data, mat.cols, mat.rows, mat.step, QImage::Format_ARGB32).copy();
         break;
     case CV_16UC4:
-        image = QImage((const unsigned char*)mat.data, mat.cols, mat.rows, mat.step, QImage::Format_RGBA64);
+        image = QImage((const unsigned char*)mat.data, mat.cols, mat.rows, mat.step, QImage::Format_RGBA64).copy();
         image = image.rgbSwapped(); // BRG转为RGB
         break;
     }
     return image;
 }
 
-void ImageUtils::on_RectifyButton_clicked()
-{
-    double rectifyRate = ui->RectifyRateInput->text().toDouble();
-    if(!TemplateImage.isNull()){
-        cv::Mat tmp = QImage2cvMat(*TemplateImage);
-        imageRectify(tmp, tmp, rectifyRate);
-        *TemplateImage = cvMat2QImage(tmp);
-    }
-    else{
-        std::cout << "NO IMAGE!" << std::endl;
-    }
-}
-
 void ImageUtils::on_actionRead_Template_Image_triggered()
 {
     QString textfile=QFileDialog::getOpenFileName(this);
-    TemplateImage = QSharedPointer<QImage>(new QImage(textfile));
-    ui->TemplateView->setPixmapItem(TemplateImage);
+    TemplateImageSrc = QSharedPointer<QImage>(new QImage(textfile));
+    ui->TemplateView->setPixmapItem(TemplateImageSrc);
 
 }
 
-
-
-void ImageUtils::on_RotateButton_clicked()
+void ImageUtils::on_ScaleModeButton_clicked()
 {
-    double rotateAngle = ui->RotateAngleInput->text().toDouble();
-    if(!TemplateImage.isNull()){
-        cv::Mat tmp = QImage2cvMat(*TemplateImage).clone();
-        imageRotate(tmp, tmp, rotateAngle);
-        cv::imwrite("C:/Users/user/Desktop/111.bmp", tmp);
-        ui->TemplateView->setPixmapItem(cvMat2QImage(tmp));
+    if(ui->ScaleModeButton->text() == "Scale Mode"){
+        ui->ScaleModeButton->setText("Increment Mode");
+        ui->XScaleInput->setText( QString::number(0));
+        ui->YScaleInput->setText( QString::number(0));
+    }
+    else{
+        ui->ScaleModeButton->setText("Scale Mode");
+        ui->XScaleInput->setText( QString::number(1));
+        ui->YScaleInput->setText( QString::number(1));
+    }
+}
+
+
+void ImageUtils::on_ImageGenerateButton_clicked()
+{
+    if(!TemplateImageSrc.isNull()){
+        cv::Mat tmp = QImage2cvMat(*TemplateImageSrc);
+
+        double rectifyRate = ui->RectifyRateInput->text().toDouble();
+        if(rectifyRate != 0){
+            imageRectify(tmp, tmp, rectifyRate);
+        }
+
+        double rotateAngle = ui->RotateAngleInput->text().toDouble();
+        if(rotateAngle != 0){
+            imageRotate(tmp, tmp, rotateAngle);
+        }
+
+        double X = ui->XScaleInput->text().toDouble();
+        double Y = ui->YScaleInput->text().toDouble();
+        if(X != 0 && Y != 0) {
+            if(ui->ScaleModeButton->text() == "Scale Mode"){
+                cv::resize(tmp,tmp,cv::Size(), X,Y);
+            }
+            else{
+                cv::resize(tmp,tmp,cv::Size(tmp.cols + X, tmp.rows+Y));
+            }
+        }
+        TemplateImage = QSharedPointer<QImage>(new QImage(cvMat2QImage(tmp)));
+        ui->TemplateView->setPixmapItem(TemplateImage);
     }
     else{
         std::cout << "NO IMAGE!" << std::endl;
     }
+}
+
+
+void ImageUtils::on_ResetParaButton_clicked()
+{
+    ui->ScaleModeButton->setText("Increment Mode");
+    ui->XScaleInput->setText( QString::number(0));
+    ui->YScaleInput->setText( QString::number(0));
+    ui->RectifyRateInput->setText( QString::number(0));
+    ui->RotateAngleInput->setText(QString::number(0));
+    if(!TemplateImageSrc.isNull()){
+        ui->TemplateView->setPixmapItem(TemplateImageSrc);
+        TemplateImage.clear();
+    }
+}
+
+
+void ImageUtils::on_actionSave_Template_Image_triggered()
+{
+    if(!TemplateImage.isNull()){
+        QString filePath = QFileDialog::getSaveFileName(nullptr, "Save Image", "", "*.png;;*.bmp;;*.jpg;;*.tif)");
+        std::cout<< filePath.toStdString() << std::endl;
+        bool status = TemplateImage->save(filePath);
+        if(status){
+            std::cout<<"Template image save successfully!" << std::endl;
+        }
+        else{
+            std::cout<<"Template image failed to save!" << std::endl;
+        }
+    }
+    else{
+        std::cout << "NO IMAGE! or Nothing Changed" << std::endl;
+    }
+}
+
+
+void ImageUtils::on_actionRead_Source_Image_triggered()
+{
+    QString textfile = QFileDialog::getOpenFileName(this);
+    SourceImageSrc = QSharedPointer<QImage>(new QImage(textfile));
+    ui->TemplateView->stackRef(SourceImageSrc);
+}
+
+
+void ImageUtils::on_horizontalSlider_valueChanged(int value)
+{
+    if(ui->TemplateView->RefItem() != nullptr){
+        ui->TemplateView->RefItem()->setOpacity((double)value / 100.0);
+    }
+}
+
+void ImageUtils::on_ButtonLeft_clicked()
+{
+    ui->TemplateView->RefItem()->setPos(ui->TemplateView->RefItem()->pos().x() - 1, ui->TemplateView->RefItem()->pos().y());
+}
+
+void ImageUtils::on_ButtonRight_clicked()
+{
+    ui->TemplateView->RefItem()->setPos(ui->TemplateView->RefItem()->pos().x() + 1, ui->TemplateView->RefItem()->pos().y());
+}
+
+void ImageUtils::on_ButtonTop_clicked()
+{
+    ui->TemplateView->RefItem()->setPos(ui->TemplateView->RefItem()->pos().x(), ui->TemplateView->RefItem()->pos().y() - 1);
+}
+
+void ImageUtils::on_ButtonBottom_clicked()
+{
+    ui->TemplateView->RefItem()->setPos(ui->TemplateView->RefItem()->pos().x(), ui->TemplateView->RefItem()->pos().y() + 1);
 }
 

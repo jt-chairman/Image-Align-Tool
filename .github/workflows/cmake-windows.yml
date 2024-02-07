@@ -49,7 +49,7 @@ jobs:
         run: cd ${{ env.install }}
 
       - name: Pack
-        run: tar -czvf ${{project_zip_name}} include lib
+        run: tar -czvf ${{env.project_zip_name}} include lib
 
       # - name: Create Release
       #   id: create_release

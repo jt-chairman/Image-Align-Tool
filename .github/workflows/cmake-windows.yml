@@ -27,7 +27,6 @@ env:
 permissions:
   contents: read
 
-
 jobs:
   build:
     permissions:

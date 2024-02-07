@@ -18,9 +18,9 @@ on:
 
 env:
   # Path to the CMake build directory.
-  project_zip_name: 'mylib.zip'
-  build: '${{ github.workspace }}/build'
-  install: '${{ github.workspace }}/install'
+  project_zip_name: 'mylib.tar'
+  build: '${{ github.workspace }}\build'
+  install: '${{ github.workspace }}\install'
 
 permissions:
   contents: read
@@ -49,7 +49,7 @@ jobs:
         run: cd ${{ env.install }}
 
       - name: Pack
-        run: tar -czvf include lib
+        run: tar -czvf ${{project_zip_name}} include lib
 
       # - name: Create Release
       #   id: create_release

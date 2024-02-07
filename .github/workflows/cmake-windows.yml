@@ -44,8 +44,12 @@ jobs:
       - name: CMake Build&Install
         run: cmake --build ${{ env.build }} --target install --config Release
 
+
+      - name: Change Dir
+        run: cd ${{ env.install }}
+
       - name: Pack
-        run: tar -czvf ${{ env.project_zip_name }} ${{ env.install }}
+        run: tar -czvf include lib
 
       # - name: Create Release
       #   id: create_release

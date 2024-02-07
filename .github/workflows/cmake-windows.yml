@@ -45,7 +45,7 @@ jobs:
         run: cmake --build ${{ env.build }} --target install --config Release
 
       - name: Pack
-        run: 7z a ${{ project_zip_path }} ${{install_location}}
+        run: 7z a ${{ env.project_zip_path }} ${{ env.install_location }}
 
       # - name: Create Release
       #   id: create_release

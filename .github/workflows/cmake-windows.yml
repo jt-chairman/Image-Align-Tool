@@ -47,26 +47,12 @@ jobs:
       - name: Pack
         run: 7z a ${{ env.project_zip_path }} ${{ env.install_location }}
 
-      - name: release
-        uses: comnoco/create-release-action@v2.0.5
-        id: create_release
+      - uses: actions/checkout@v2
+      - uses: ncipollo/release-action@v1
         with:
-          draft: false
-          prerelease: false
-          release_name: ${{ steps.version.outputs.version }}
-          tag_name: ${{ github.ref }}
-          body_path: CHANGELOG.md
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
+          artifacts: ${{ steps.create_release.outputs.upload_url }}
+          bodyFile: "body.md"
+          token: ${{ secrets.YOUR_GITHUB_TOKEN }}
 
-      - name: Upload binaries to release
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ env.project_zip_path }}
-          asset_name: mylib.windows-64.tar.gz
-          asset_content_type: application/gzip
 
 

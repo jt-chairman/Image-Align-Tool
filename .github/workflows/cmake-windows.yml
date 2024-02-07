@@ -52,7 +52,6 @@ jobs:
         with:
           artifacts: ${{ steps.create_release.outputs.upload_url }}
           bodyFile: "body.md"
-          token: ${{ secrets.YOUR_GITHUB_TOKEN }}
 
 
 

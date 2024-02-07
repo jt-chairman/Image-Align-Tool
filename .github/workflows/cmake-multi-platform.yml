@@ -75,4 +75,4 @@ jobs:
       run: ctest --build-config ${{ matrix.build_type }}
 
     - name: Release
-      run: zip -r '../../out'
+      run: zip -r ${{ secrets.ReleaseZipName }} '../../out'

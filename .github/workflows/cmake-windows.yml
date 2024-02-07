@@ -47,7 +47,7 @@ jobs:
       - name: Pack
         run: 7z a ${{ env.project_zip_path }} ${{ env.install_location }}
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: ncipollo/release-action@v1
         with:
           artifacts: ${{ steps.create_release.outputs.upload_url }}

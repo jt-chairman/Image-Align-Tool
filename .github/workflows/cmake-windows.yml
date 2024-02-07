@@ -48,17 +48,15 @@ jobs:
         run: 7z a ${{ env.project_zip_path }} ${{ env.install_location }}
 
       - name: Upload binaries to release
-        uses: comnoco/create-release-action@v2.0.5
+
+        uses: svenstaro/upload-release-action@v2
         with:
-          tag_name: ${{ github.ref }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ${{env.project_zip_path}}
-          release_name: Release ${{ github.ref }}
-          body: |
-            Changes in this Release
-            - First Change
-            - Second Change
-          draft: false
-          prerelease: false
+          asset_name: mything
+          tag: ${{ github.ref }}
+          overwrite: true
+          body: "This is my release text"
 
 
 

@@ -18,7 +18,7 @@ on:
 
 env:
   # Path to the CMake build directory.
-  project_zip_path: '${{ github.workspace }}\mylib.zip'
+  project_zip_path: '${{ github.workspace }}\install\mylib.zip'
   build: '${{ github.workspace }}\build'
   install_location: '${{ github.workspace }}\install\*'
 
@@ -47,20 +47,15 @@ jobs:
       - name: Pack
         run: 7z a ${{ env.project_zip_path }} ${{ env.install_location }}
 
-      # - name: Create Release
-      #   id: create_release
-      #   uses: actions/create-release@v1
-      #   env:
-      #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #       tag_name: ${{ github.ref }}
-      #       release_name: Release ${{ github.ref }}
-      #       body: |
-      #           Changes in this release:
-      #           - Add new feature
-      #           - Fix bugs
-      #       draft: false
-      #       prerelease: false
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{env.project_zip_path}}
+          asset_name: package
+          tag: ${{ github.ref }}
+          overwrite: true
+          body: "This is my release text"
 
 
 

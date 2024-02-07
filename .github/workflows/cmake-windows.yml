@@ -18,9 +18,9 @@ on:
 
 env:
   # Path to the CMake build directory.
-  project_zip_name: 'mylib.tar'
+  project_zip_path: '${{ github.workspace }}\mylib.zip'
   build: '${{ github.workspace }}\build'
-  install: '${{ github.workspace }}\install'
+  install_location: '${{ github.workspace }}\install\*'
 
 permissions:
   contents: read
@@ -44,12 +44,8 @@ jobs:
       - name: CMake Build&Install
         run: cmake --build ${{ env.build }} --target install --config Release
 
-
-      - name: Change Dir
-        run: cd ${{ env.install }}
-
       - name: Pack
-        run: tar -czvf ${{env.project_zip_name}} include lib
+        run: 7z a ${{ project_zip_path }} ${{install_location}}
 
       # - name: Create Release
       #   id: create_release

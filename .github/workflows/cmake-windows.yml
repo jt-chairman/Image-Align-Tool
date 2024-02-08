@@ -54,7 +54,7 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ${{ env.project_zip_path }}
-          asset_name: mything
+          asset_name: mylib.zip
           tag: ${{ github.ref }}
           overwrite: true
           body: "This is my release text"
